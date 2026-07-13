@@ -35,20 +35,14 @@ System artifacts live in `.knbase/` (`config.json`, `index.json`,
 
 ## Quick setup (recommended, no clone)
 
-Once `knbase` is published to npm (see [Publishing to npm](#publishing-to-npm)),
-you can use it without cloning this repo.
-
-Install it once, globally:
-
-```bash
-npm i @vonneollc/knbase
-```
+The package is published as [`@vonneollc/knbase`](https://www.npmjs.com/package/@vonneollc/knbase),
+so you can use it without cloning this repo.
 
 **1. Initialize governance in your project:**
 
 ```bash
 cd /path/to/your/project
-knbase init
+npx -y --package @vonneollc/knbase knbase init
 ```
 
 **2. Register the MCP server** with your agent. Cursor example
@@ -58,28 +52,39 @@ knbase init
 {
   "mcpServers": {
     "knbase": {
-      "command": "knbase-mcp",
+      "command": "npx",
+      "args": ["-y", "--package", "@vonneollc/knbase", "knbase-mcp"],
       "env": { "KNBASE_ROOT": "/absolute/path/to/your/project" }
     }
   }
 }
 ```
 
-Prefer not to install globally? Use `npx` instead — no install step at all:
+> **macOS / GUI apps:** apps like Cursor often don't inherit your shell `PATH`,
+> so `npx` (or `knbase-mcp`) may not be found. If the server fails to start, use
+> an absolute path for `command`. Find it with `which npx` (e.g.
+> `/opt/homebrew/bin/npx` for Homebrew Node), then set
+> `"command": "/opt/homebrew/bin/npx"`.
+
+Prefer a global install? Then the bins are available directly:
+
+```bash
+npm install -g @vonneollc/knbase
+which knbase-mcp     # e.g. /opt/homebrew/bin/knbase-mcp
+```
 
 ```json
 {
   "mcpServers": {
     "knbase": {
-      "command": "npx",
-      "args": ["-y", "--package", "knbase", "knbase-mcp"],
+      "command": "/opt/homebrew/bin/knbase-mcp",
       "env": { "KNBASE_ROOT": "/absolute/path/to/your/project" }
     }
   }
 }
 ```
 
-…and run CLI commands with `npx knbase <command>` (e.g. `npx knbase init`).
+…and run CLI commands with `knbase <command>` (e.g. `knbase init`).
 
 `KNBASE_ROOT` is optional; if omitted the server resolves the project root by
 walking up from the working directory (looking for `.knbase/` or `.git`). Each
