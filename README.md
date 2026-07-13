@@ -33,17 +33,80 @@ Stored in `memory-bank/` (configurable) in each project root:
 System artifacts live in `.knbase/` (`config.json`, `index.json`,
 `mindmap.md`, `activity.log`, `session.json`) and should not be edited by hand.
 
-## Install / build
+## Quick setup (recommended, no clone)
+
+Once `knbase` is published to npm (see [Publishing to npm](#publishing-to-npm)),
+you can use it without cloning this repo.
+
+Install it once, globally:
 
 ```bash
-npm install
-npm run build
+npm install -g knbase
 ```
 
-## Use as an MCP server (any MCP-capable agent)
+**1. Initialize governance in your project:**
 
-Add to your agent's MCP config. Example (Cursor `~/.cursor/mcp.json` or a
-project `.cursor/mcp.json`):
+```bash
+cd /path/to/your/project
+knbase init
+```
+
+**2. Register the MCP server** with your agent. Cursor example
+(`~/.cursor/mcp.json` for all projects, or `.cursor/mcp.json` for one project):
+
+```json
+{
+  "mcpServers": {
+    "knbase": {
+      "command": "knbase-mcp",
+      "env": { "KNBASE_ROOT": "/absolute/path/to/your/project" }
+    }
+  }
+}
+```
+
+Prefer not to install globally? Use `npx` instead — no install step at all:
+
+```json
+{
+  "mcpServers": {
+    "knbase": {
+      "command": "npx",
+      "args": ["-y", "--package", "knbase", "knbase-mcp"],
+      "env": { "KNBASE_ROOT": "/absolute/path/to/your/project" }
+    }
+  }
+}
+```
+
+…and run CLI commands with `npx knbase <command>` (e.g. `npx knbase init`).
+
+`KNBASE_ROOT` is optional; if omitted the server resolves the project root by
+walking up from the working directory (looking for `.knbase/` or `.git`). Each
+tool also accepts an explicit `root` argument.
+
+## Complete setup (from source)
+
+Use this while developing knbase, or before it is published to npm.
+
+```bash
+git clone <repo-url> knbase
+cd knbase
+npm install
+npm run build        # compiles TypeScript into dist/
+```
+
+Then either expose the binaries on your PATH with `npm link`:
+
+```bash
+npm link             # makes `knbase` and `knbase-mcp` available globally
+cd /path/to/your/project
+knbase init
+```
+
+…or reference the built files directly by absolute path.
+
+MCP config (from source):
 
 ```json
 {
@@ -57,9 +120,11 @@ project `.cursor/mcp.json`):
 }
 ```
 
-`KNBASE_ROOT` is optional; if omitted the server resolves the project root by
-walking up from the working directory (looking for `.knbase/` or `.git`). Each
-tool also accepts an explicit `root` argument.
+CLI (from source):
+
+```bash
+node /absolute/path/to/knbase/dist/cli/index.js init
+```
 
 ### MCP tools
 
@@ -73,24 +138,15 @@ tool also accepts an explicit `root` argument.
 | `get_mindmap` | Returns the combined mermaid mind map + index. |
 | `get_status` | Session state, missing files, active task, recent log. |
 
-## Use via the CLI (any agent / shell)
+## CLI commands
 
 ```bash
-# Initialize governance in the current project
-npx knbase init            # or: node dist/cli/index.js init
-
-# Show status / gate in scripts
-knbase status
-knbase check               # exit 0 only if context is loaded and current
-
-# Run a command only if governance context is loaded and current
-knbase guard -- <your command>
-
-# Install a git pre-commit hook that blocks commits unless a task was completed
-knbase install-hooks
-
-# Print the AGENTS.md contract
-knbase agents-doc
+knbase init                 # scaffold governance docs, index, mind map, AGENTS.md
+knbase status               # show session state, missing files, recent log
+knbase check                # exit 0 only if context is loaded and current
+knbase guard -- <command>   # run a command only if governance context is loaded
+knbase install-hooks        # install a git pre-commit hook that enforces updates
+knbase agents-doc           # print the AGENTS.md contract
 ```
 
 ## Enforcement model
