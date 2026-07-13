@@ -30,7 +30,7 @@ function fail(message: string, extra?: unknown): TextResult {
 
 /**
  * Determines the project root for a tool call. The client may pass an explicit
- * `root`; otherwise the server falls back to AIMEMORY_ROOT / cwd resolution.
+ * `root`; otherwise the server falls back to KNBASE_ROOT / cwd resolution.
  */
 function project(root?: string) {
   return openProject(root);
@@ -38,7 +38,7 @@ function project(root?: string) {
 
 export function registerTools(server: McpServer): void {
   const fileEnum = z.enum(GOVERNANCE_FILES);
-  const rootArg = { root: z.string().optional().describe("Absolute project root. Defaults to AIMEMORY_ROOT or cwd.") };
+  const rootArg = { root: z.string().optional().describe("Absolute project root. Defaults to KNBASE_ROOT or cwd.") };
 
   server.registerTool(
     "start_session",

@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { randomUUID } from "node:crypto";
 import { ensureDir, type ResolvedPaths } from "./config.js";
-import type { AimemoryConfig, SessionData } from "../types.js";
+import type { KnbaseConfig, SessionData } from "../types.js";
 
 export function loadSession(p: ResolvedPaths): SessionData | null {
   if (!existsSync(p.sessionPath)) return null;
@@ -36,7 +36,7 @@ export function newTaskId(): string {
  */
 export function isSessionFresh(
   session: SessionData | null,
-  config: AimemoryConfig,
+  config: KnbaseConfig,
 ): boolean {
   if (!session) return false;
   if (session.state === "UNINITIALIZED" || session.state === "NEEDS_BOOTSTRAP") {

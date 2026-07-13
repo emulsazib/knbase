@@ -2,7 +2,7 @@
 
 Agent-agnostic AI project governance and memory system.
 
-`aimemory` forces any AI agent to work on a project the *right* way:
+`knbase` forces any AI agent to work on a project the *right* way:
 
 1. **Read before acting.** Before doing anything, an agent must load the project's
    governance context (a compact mind map + per-file summaries + current phase).
@@ -30,7 +30,7 @@ Stored in `memory-bank/` (configurable) in each project root:
 | `rules.md` | Hard rules and guardrails every agent must obey |
 | `memory.md` | Running knowledge base, updated after every task |
 
-System artifacts live in `.aimemory/` (`config.json`, `index.json`,
+System artifacts live in `.knbase/` (`config.json`, `index.json`,
 `mindmap.md`, `activity.log`, `session.json`) and should not be edited by hand.
 
 ## Install / build
@@ -48,17 +48,17 @@ project `.cursor/mcp.json`):
 ```json
 {
   "mcpServers": {
-    "aimemory": {
+    "knbase": {
       "command": "node",
-      "args": ["/absolute/path/to/aimemory/dist/mcp/server.js"],
-      "env": { "AIMEMORY_ROOT": "/absolute/path/to/your/project" }
+      "args": ["/absolute/path/to/knbase/dist/mcp/server.js"],
+      "env": { "KNBASE_ROOT": "/absolute/path/to/your/project" }
     }
   }
 }
 ```
 
-`AIMEMORY_ROOT` is optional; if omitted the server resolves the project root by
-walking up from the working directory (looking for `.aimemory/` or `.git`). Each
+`KNBASE_ROOT` is optional; if omitted the server resolves the project root by
+walking up from the working directory (looking for `.knbase/` or `.git`). Each
 tool also accepts an explicit `root` argument.
 
 ### MCP tools
@@ -77,20 +77,20 @@ tool also accepts an explicit `root` argument.
 
 ```bash
 # Initialize governance in the current project
-npx aimemory init            # or: node dist/cli/index.js init
+npx knbase init            # or: node dist/cli/index.js init
 
 # Show status / gate in scripts
-aimemory status
-aimemory check               # exit 0 only if context is loaded and current
+knbase status
+knbase check               # exit 0 only if context is loaded and current
 
 # Run a command only if governance context is loaded and current
-aimemory guard -- <your command>
+knbase guard -- <your command>
 
 # Install a git pre-commit hook that blocks commits unless a task was completed
-aimemory install-hooks
+knbase install-hooks
 
 # Print the AGENTS.md contract
-aimemory agents-doc
+knbase agents-doc
 ```
 
 ## Enforcement model
@@ -101,7 +101,7 @@ so enforcement is layered:
 1. **State machine** — MCP tools refuse out-of-order calls
    (`UNINITIALIZED -> NEEDS_BOOTSTRAP -> CONTEXT_LOADED -> TASK_ACTIVE -> ...`).
 2. **Contract** — `init` writes an `AGENTS.md` that every agent reads by convention.
-3. **Hard gates** — the `git pre-commit` hook and `aimemory guard` wrapper block
+3. **Hard gates** — the `git pre-commit` hook and `knbase guard` wrapper block
    real actions (commits, shell commands) until governance is satisfied.
 
 ## Token discipline

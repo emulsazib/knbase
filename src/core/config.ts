@@ -2,18 +2,18 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, isAbsolute, join, resolve } from "node:path";
 import {
   GOVERNANCE_FILES,
-  type AimemoryConfig,
+  type KnbaseConfig,
   type GovernanceFileKey,
 } from "../types.js";
 
 /** Name of the system artifact directory. */
-export const SYSTEM_DIR = ".aimemory";
+export const SYSTEM_DIR = ".knbase";
 /** Default directory (relative to project root) for the governance docs. */
 export const DEFAULT_DOCS_DIR = "memory-bank";
 
 const CONFIG_VERSION = 1;
 
-export const DEFAULT_CONFIG: AimemoryConfig = {
+export const DEFAULT_CONFIG: KnbaseConfig = {
   version: CONFIG_VERSION,
   docsDir: DEFAULT_DOCS_DIR,
   files: [...GOVERNANCE_FILES],
@@ -21,19 +21,19 @@ export const DEFAULT_CONFIG: AimemoryConfig = {
 };
 
 /**
- * Resolves the project root. Honors the AIMEMORY_ROOT env var, otherwise walks
- * up from `startDir` looking for an existing `.aimemory` dir or a `.git` dir,
+ * Resolves the project root. Honors the KNBASE_ROOT env var, otherwise walks
+ * up from `startDir` looking for an existing `.knbase` dir or a `.git` dir,
  * falling back to `startDir` itself.
  */
 export function resolveProjectRoot(startDir: string = process.cwd()): string {
-  const envRoot = process.env.AIMEMORY_ROOT;
+  const envRoot = process.env.KNBASE_ROOT;
   if (envRoot && envRoot.trim()) {
     return resolve(envRoot.trim());
   }
 
   let current = resolve(startDir);
   // Walk upward until filesystem root.
-  // Prefer an existing .aimemory dir; otherwise use the nearest .git.
+  // Prefer an existing .knbase dir; otherwise use the nearest .git.
   let gitFallback: string | null = null;
   while (true) {
     if (existsSync(join(current, SYSTEM_DIR))) return current;
@@ -58,7 +58,7 @@ export interface ResolvedPaths {
   docPath: (key: GovernanceFileKey) => string;
 }
 
-export function paths(root: string, config: AimemoryConfig): ResolvedPaths {
+export function paths(root: string, config: KnbaseConfig): ResolvedPaths {
   const systemDir = join(root, SYSTEM_DIR);
   const docsDir = isAbsolute(config.docsDir)
     ? config.docsDir
@@ -76,11 +76,11 @@ export function paths(root: string, config: AimemoryConfig): ResolvedPaths {
   };
 }
 
-export function loadConfig(root: string): AimemoryConfig {
+export function loadConfig(root: string): KnbaseConfig {
   const configPath = join(root, SYSTEM_DIR, "config.json");
   if (!existsSync(configPath)) return { ...DEFAULT_CONFIG };
   try {
-    const raw = JSON.parse(readFileSync(configPath, "utf8")) as Partial<AimemoryConfig>;
+    const raw = JSON.parse(readFileSync(configPath, "utf8")) as Partial<KnbaseConfig>;
     return {
       ...DEFAULT_CONFIG,
       ...raw,
@@ -94,7 +94,7 @@ export function loadConfig(root: string): AimemoryConfig {
   }
 }
 
-export function saveConfig(root: string, config: AimemoryConfig): void {
+export function saveConfig(root: string, config: KnbaseConfig): void {
   const configPath = join(root, SYSTEM_DIR, "config.json");
   ensureDir(dirname(configPath));
   writeFileSync(configPath, JSON.stringify(config, null, 2) + "\n", "utf8");
@@ -104,7 +104,7 @@ export function ensureDir(dir: string): void {
   if (!existsSync(dir)) mkdirSync(dir, { recursive: true });
 }
 
-/** Whether aimemory has been initialized in the given root. */
+/** Whether knbase has been initialized in the given root. */
 export function isInitialized(root: string): boolean {
   return existsSync(join(root, SYSTEM_DIR, "config.json"));
 }

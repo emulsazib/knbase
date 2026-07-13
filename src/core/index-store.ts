@@ -2,7 +2,7 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { relative } from "node:path";
 import {
   GOVERNANCE_FILES,
-  type AimemoryConfig,
+  type KnbaseConfig,
   type FileIndexEntry,
   type GovernanceFileKey,
   type IndexData,
@@ -25,7 +25,7 @@ function emptyEntry(key: GovernanceFileKey, path: string): FileIndexEntry {
   };
 }
 
-export function loadIndex(p: ResolvedPaths, config: AimemoryConfig): IndexData {
+export function loadIndex(p: ResolvedPaths, config: KnbaseConfig): IndexData {
   let data: IndexData | null = null;
   if (existsSync(p.indexPath)) {
     try {
@@ -60,7 +60,7 @@ export function saveIndex(p: ResolvedPaths, index: IndexData): void {
  */
 export function refreshIndex(
   p: ResolvedPaths,
-  config: AimemoryConfig,
+  config: KnbaseConfig,
   existing?: IndexData,
 ): IndexData {
   const index = existing ?? loadIndex(p, config);
@@ -100,7 +100,7 @@ export function recordWrite(
 /** Governance keys whose file is missing or still a placeholder. */
 export function missingFiles(
   p: ResolvedPaths,
-  config: AimemoryConfig,
+  config: KnbaseConfig,
 ): GovernanceFileKey[] {
   const out: GovernanceFileKey[] = [];
   for (const key of config.files) {
@@ -113,7 +113,7 @@ export function missingFiles(
 /** Current checksum map keyed by governance file key. */
 export function currentChecksums(
   p: ResolvedPaths,
-  config: AimemoryConfig,
+  config: KnbaseConfig,
 ): Record<string, string> {
   const map: Record<string, string> = {};
   for (const key of config.files) {

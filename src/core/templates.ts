@@ -22,7 +22,7 @@ function scaffoldFrom(
   const body = sections
     .map((s) => `## ${s.heading}\n\n> ${s.hint}\n`)
     .join("\n");
-  return `# ${title}\n\n<!-- ${purpose} -->\n<!-- Managed by aimemory. Replace the guidance blockquotes with real content. -->\n\n${body}`;
+  return `# ${title}\n\n<!-- ${purpose} -->\n<!-- Managed by knbase. Replace the guidance blockquotes with real content. -->\n\n${body}`;
 }
 
 export const TEMPLATES: Record<GovernanceFileKey, TemplateDef> = {

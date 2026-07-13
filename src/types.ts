@@ -1,5 +1,5 @@
 /**
- * Shared types for the aimemory governance system.
+ * Shared types for the knbase governance system.
  */
 
 /** Canonical governance document keys. Order defines display order everywhere. */
@@ -21,7 +21,7 @@ export type SessionState =
   | "CONTEXT_LOADED" // agent has read context this session; may begin tasks
   | "TASK_ACTIVE"; // a task is in progress; must be completed with updates
 
-/** Per-file metadata cached in .aimemory/index.json. */
+/** Per-file metadata cached in .knbase/index.json. */
 export interface FileIndexEntry {
   /** Governance file key. */
   key: GovernanceFileKey;
@@ -64,7 +64,7 @@ export interface ActiveTask {
   startChecksums: Record<string, string>;
 }
 
-export interface AimemoryConfig {
+export interface KnbaseConfig {
   version: number;
   /** Directory (relative to project root) holding the governance docs. */
   docsDir: string;

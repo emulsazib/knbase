@@ -7,7 +7,7 @@ import { registerTools } from "./tools.js";
 
 export function createServer(): McpServer {
   const server = new McpServer({
-    name: "aimemory",
+    name: "knbase",
     version: "0.1.0",
   });
   registerTools(server);
@@ -19,7 +19,7 @@ async function main(): Promise<void> {
   const transport = new StdioServerTransport();
   await server.connect(transport);
   // stderr is safe for logging; stdout is reserved for the MCP protocol.
-  process.stderr.write("[aimemory] MCP server running on stdio\n");
+  process.stderr.write("[knbase] MCP server running on stdio\n");
 }
 
 function isMain(): boolean {
@@ -34,7 +34,7 @@ function isMain(): boolean {
 
 if (isMain()) {
   main().catch((err) => {
-    process.stderr.write(`[aimemory] Fatal: ${(err as Error).stack ?? err}\n`);
+    process.stderr.write(`[knbase] Fatal: ${(err as Error).stack ?? err}\n`);
     process.exit(1);
   });
 }

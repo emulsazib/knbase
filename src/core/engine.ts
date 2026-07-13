@@ -36,7 +36,7 @@ import {
 } from "./session.js";
 import { TEMPLATES } from "./templates.js";
 import type {
-  AimemoryConfig,
+  KnbaseConfig,
   GovernanceFileKey,
   IndexData,
   SessionData,
@@ -44,7 +44,7 @@ import type {
 
 export interface Project {
   root: string;
-  config: AimemoryConfig;
+  config: KnbaseConfig;
   p: ResolvedPaths;
 }
 
@@ -55,7 +55,7 @@ export function openProject(startDir?: string): Project {
   return { root, config, p: paths(root, config) };
 }
 
-export function isKnownFile(config: AimemoryConfig, key: string): key is GovernanceFileKey {
+export function isKnownFile(config: KnbaseConfig, key: string): key is GovernanceFileKey {
   return (config.files as string[]).includes(key);
 }
 
@@ -69,13 +69,13 @@ export interface InitResult {
 }
 
 /**
- * Initialize aimemory in a project: create `.aimemory/`, write config, scaffold
+ * Initialize knbase in a project: create `.knbase/`, write config, scaffold
  * any missing governance docs with templates, build index + mindmap.
  */
 export function initProject(startDir?: string, docsDir?: string): InitResult {
   const root = resolveProjectRoot(startDir);
   const existed = isInitialized(root);
-  const config: AimemoryConfig = existed
+  const config: KnbaseConfig = existed
     ? loadConfig(root)
     : { ...DEFAULT_CONFIG, ...(docsDir ? { docsDir } : {}) };
   const p = paths(root, config);
@@ -101,7 +101,7 @@ export function initProject(startDir?: string, docsDir?: string): InitResult {
   writeMindmap(p, config, index);
   appendLog(p, {
     event: "init",
-    detail: `Initialized aimemory (docsDir=${config.docsDir})`,
+    detail: `Initialized knbase (docsDir=${config.docsDir})`,
     meta: { scaffolded, alreadyPresent },
   });
 
@@ -133,7 +133,7 @@ export interface CompactContext {
   }[];
 }
 
-function buildCompactContext(p: ResolvedPaths, config: AimemoryConfig, index: IndexData): CompactContext {
+function buildCompactContext(p: ResolvedPaths, config: KnbaseConfig, index: IndexData): CompactContext {
   const files = config.files.map((key) => {
     const e = index.files[key];
     return {
@@ -153,7 +153,7 @@ function buildCompactContext(p: ResolvedPaths, config: AimemoryConfig, index: In
 }
 
 /** Pulls the "Current Phase" section body from phase.md, if present. */
-function extractCurrentPhase(p: ResolvedPaths, config: AimemoryConfig): string {
+function extractCurrentPhase(p: ResolvedPaths, config: KnbaseConfig): string {
   if (!config.files.includes("phase")) return "unknown";
   const doc = readDoc(p.docPath("phase"));
   if (!doc.exists) return "unknown";
@@ -182,7 +182,7 @@ const READY_INSTRUCTIONS =
 export function startSession(project: Project): StartSessionResult {
   const { p, config, root } = project;
   ensureDir(p.systemDir);
-  // Persist config so MCP-only usage (without `aimemory init`) is fully
+  // Persist config so MCP-only usage (without `knbase init`) is fully
   // functional for status/guard checks.
   if (!isInitialized(root)) saveConfig(root, config);
   const index = refreshIndex(p, config);
@@ -502,7 +502,7 @@ export interface GuardDecision {
 export function guardDecision(project: Project): GuardDecision {
   const { p, config, root } = project;
   if (!isInitialized(root)) {
-    return { allow: false, reason: "aimemory is not initialized. Run `aimemory init`." };
+    return { allow: false, reason: "knbase is not initialized. Run `knbase init`." };
   }
   const missing = missingFiles(p, config);
   if (missing.length > 0) {
