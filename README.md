@@ -1,4 +1,4 @@
-# aimemory
+# knbase
 
 Agent-agnostic AI project governance and memory system.
 
