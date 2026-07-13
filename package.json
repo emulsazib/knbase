@@ -1,0 +1,51 @@
+{
+  "name": "aimemory",
+  "version": "0.1.0",
+  "description": "Agent-agnostic AI project governance and memory system. Forces AI agents to read governance docs before acting, bootstraps them if missing, forces updates after each task, and maintains a combined mind map and activity log.",
+  "type": "module",
+  "bin": {
+    "aimemory": "bin/aimemory"
+  },
+  "main": "dist/mcp/server.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./mcp": "./dist/mcp/server.js",
+    "./cli": "./dist/cli/index.js"
+  },
+  "files": [
+    "dist",
+    "bin",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "dev:mcp": "tsx src/mcp/server.ts",
+    "dev:cli": "tsx src/cli/index.ts",
+    "start": "node dist/mcp/server.js",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "mcp",
+    "ai",
+    "agent",
+    "memory",
+    "governance",
+    "cursor",
+    "model-context-protocol"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "commander": "^12.1.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
