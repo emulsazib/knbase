@@ -41,7 +41,7 @@ you can use it without cloning this repo.
 Install it once, globally:
 
 ```bash
-npm install -g knbase
+npm i @vonneollc/knbase
 ```
 
 **1. Initialize governance in your project:**
@@ -177,6 +177,14 @@ npm run dev:mcp     # run the MCP server with tsx
 npm run dev:cli -- status
 ```
 
+## Contributing
+
+Contributions are welcome from everyone. Fork the repo, create a branch, and
+open a pull request. Bug reports and feature ideas via issues are equally
+appreciated. By contributing you agree that your contributions are licensed
+under the project's MIT license.
+
 ## License
 
-MIT
+Released under the [MIT License](./LICENSE) — free to use, modify, distribute,
+and build upon, including commercially.
