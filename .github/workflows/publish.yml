@@ -1,13 +1,11 @@
-name: Release to npm
+name: Publish to npm
 
-# Publishes to npm on every push to main, but ONLY when the version in
-# package.json is not already published. To cut a release: bump the version
-# (e.g. `npm version patch`) and push. Pushes that don't change the version
-# are skipped — no duplicate-publish errors, no tags required.
+# Publishes the package to npm whenever a version tag (e.g. v0.1.2) is pushed.
+# Create one with:  npm version patch && git push --follow-tags
 on:
   push:
-    branches:
-      - main
+    tags:
+      - "v*"
 
 jobs:
   publish:
@@ -25,31 +23,13 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org
 
-      - name: Check whether this version is already published
-        id: check
-        run: |
-          PKG_NAME=$(node -p "require('./package.json').name")
-          PKG_VERSION=$(node -p "require('./package.json').version")
-          echo "Package: $PKG_NAME@$PKG_VERSION"
-          PUBLISHED=$(npm view "$PKG_NAME@$PKG_VERSION" version 2>/dev/null || true)
-          if [ "$PUBLISHED" = "$PKG_VERSION" ]; then
-            echo "Already on npm — skipping publish."
-            echo "should_publish=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "Not on npm — will publish."
-            echo "should_publish=true" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Install dependencies
-        if: steps.check.outputs.should_publish == 'true'
         run: npm ci
 
       - name: Build
-        if: steps.check.outputs.should_publish == 'true'
         run: npm run build
 
       - name: Publish
-        if: steps.check.outputs.should_publish == 'true'
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
