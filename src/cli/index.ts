@@ -18,7 +18,7 @@ const program = new Command();
 program
   .name("knbase")
   .description("Agent-agnostic AI project governance and memory system")
-  .version("0.1.2");
+  .version("0.1.5");
 
 /* -------------------------------------------------------------------- init --- */
 program

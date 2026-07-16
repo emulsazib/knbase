@@ -1,6 +1,6 @@
 {
   "name": "@vonneollc/knbase",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "Agent-agnostic AI project governance and memory system. Forces AI agents to read governance docs before acting, bootstraps them if missing, forces updates after each task, and maintains a combined mind map and activity log.",
   "type": "module",
   "bin": {
@@ -39,6 +39,14 @@
     "model-context-protocol"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emulsazib/knbase.git"
+  },
+  "bugs": {
+    "url": "https://github.com/emulsazib/knbase/issues"
+  },
+  "homepage": "https://github.com/emulsazib/knbase#readme",
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.0",
     "commander": "^12.1.0",
