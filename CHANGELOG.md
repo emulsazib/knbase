@@ -5,6 +5,27 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-07-17
+
+Automatic governance on connect. Once the MCP server is connected, agents now
+receive and follow the knbase workflow with no user commands.
+
+### Added
+- Server-level MCP `instructions` (returned in the `initialize` response) so
+  compatible clients inject the governance workflow into the agent's context the
+  moment knbase connects — read context first, don't scan the whole codebase,
+  gate tasks, and update `memory.md` after each task.
+
+### Changed
+- `start_session` now self-bootstraps a project on first use (creates `.knbase/`,
+  scaffolds the governance docs, and writes `AGENTS.md`), so `knbase init` is no
+  longer required — registering the MCP server is the only setup step.
+- `AGENTS.md` authoring moved into `initProject` so the CLI and MCP paths produce
+  the same on-disk contract.
+- README documents the zero-command flow; `knbase init` is now optional.
+- CI: releases publish to npm automatically on push to `main` whenever the
+  `package.json` version is not already published.
+
 ## [0.1.1] - 2026-07-14
 
 Documentation and packaging release. No runtime/API changes — safe drop-in
@@ -43,5 +64,6 @@ Initial public release on npm as `@vonneollc/knbase`.
   state machine, activity log, and generated `AGENTS.md` contract.
 - Git pre-commit hook and `guard` wrapper as hard enforcement gates.
 
+[0.1.2]: https://github.com/emulsazib/knbase/releases/tag/v0.1.2
 [0.1.1]: https://github.com/emulsazib/knbase/releases/tag/v0.1.1
 [0.1.0]: https://github.com/emulsazib/knbase/releases/tag/v0.1.0

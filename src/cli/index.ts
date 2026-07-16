@@ -18,7 +18,7 @@ const program = new Command();
 program
   .name("knbase")
   .description("Agent-agnostic AI project governance and memory system")
-  .version("0.1.0");
+  .version("0.1.2");
 
 /* -------------------------------------------------------------------- init --- */
 program
@@ -26,18 +26,17 @@ program
   .description("Initialize governance in the current project (scaffold docs, index, mind map, AGENTS.md)")
   .option("-d, --docs-dir <dir>", "Directory for governance docs (default: memory-bank)")
   .action((opts: { docsDir?: string }) => {
+    // initProject scaffolds docs, index, mind map, and writes AGENTS.md.
     const result = initProject(process.cwd(), opts.docsDir);
     const project = openProject(result.root);
     const agentsPath = join(result.root, "AGENTS.md");
-    if (!existsSync(agentsPath)) {
-      writeFileSync(agentsPath, renderAgentsDoc(project.config), "utf8");
-    }
     console.log(`knbase initialized at ${result.root}`);
     console.log(`  docs dir:    ${project.config.docsDir}/`);
     console.log(`  scaffolded:  ${result.scaffolded.join(", ") || "(none)"}`);
     console.log(`  already set: ${result.alreadyPresent.join(", ") || "(none)"}`);
-    console.log(`  AGENTS.md:   ${existsSync(agentsPath) ? "written" : "present"}`);
-    console.log("\nNext: agents should call the `start_session` MCP tool, or run `knbase status`.");
+    console.log(`  AGENTS.md:   ${existsSync(agentsPath) ? "written" : "(none)"}`);
+    console.log("\nNote: with the knbase MCP server connected, this runs automatically on first use.");
+    console.log("Next: agents should call the `start_session` MCP tool, or run `knbase status`.");
   });
 
 /* ------------------------------------------------------------------ status --- */

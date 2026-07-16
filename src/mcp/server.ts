@@ -4,12 +4,19 @@ import { realpathSync } from "node:fs";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { registerTools } from "./tools.js";
+import { SERVER_INSTRUCTIONS } from "./instructions.js";
 
 export function createServer(): McpServer {
-  const server = new McpServer({
-    name: "knbase",
-    version: "0.1.0",
-  });
+  // `instructions` is returned in the MCP `initialize` response; clients inject
+  // it into the agent's context at connect, so the governance rules apply
+  // automatically with no user action. See src/mcp/instructions.ts.
+  const server = new McpServer(
+    {
+      name: "knbase",
+      version: "0.1.2",
+    },
+    { instructions: SERVER_INSTRUCTIONS },
+  );
   registerTools(server);
   return server;
 }

@@ -1,4 +1,5 @@
-import { existsSync } from "node:fs";
+import { existsSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import {
   DEFAULT_CONFIG,
   ensureDir,
@@ -9,6 +10,7 @@ import {
   saveConfig,
   type ResolvedPaths,
 } from "./config.js";
+import { renderAgentsDoc } from "./agents-doc.js";
 import {
   checksum,
   missingSections,
@@ -99,6 +101,9 @@ export function initProject(startDir?: string, docsDir?: string): InitResult {
   const index = refreshIndex(p, config);
   saveIndex(p, index);
   writeMindmap(p, config, index);
+  // Write the AGENTS.md contract at the project root so every init path (CLI and
+  // the MCP auto-bootstrap) yields the same on-disk governance contract.
+  writeAgentsDoc(root, config);
   appendLog(p, {
     event: "init",
     detail: `Initialized knbase (docsDir=${config.docsDir})`,
@@ -106,6 +111,14 @@ export function initProject(startDir?: string, docsDir?: string): InitResult {
   });
 
   return { root, createdConfig: !existed, scaffolded, alreadyPresent };
+}
+
+/** Write AGENTS.md at the project root if it is not already present. */
+function writeAgentsDoc(root: string, config: KnbaseConfig): void {
+  const agentsPath = join(root, "AGENTS.md");
+  if (!existsSync(agentsPath)) {
+    writeFileSync(agentsPath, renderAgentsDoc(config), "utf8");
+  }
 }
 
 /* --------------------------------------------------------------- session --- */
@@ -181,10 +194,22 @@ const READY_INSTRUCTIONS =
 
 export function startSession(project: Project): StartSessionResult {
   const { p, config, root } = project;
+  // Self-bootstrap: connecting the MCP server is the only setup needed — no
+  // `knbase init` command. On first use, scaffold .knbase/, the template docs,
+  // and AGENTS.md automatically. Guarded so a read-only workspace degrades
+  // gracefully (still creates the system dir) instead of crashing the server.
+  if (!isInitialized(root)) {
+    try {
+      initProject(root);
+    } catch (err) {
+      process.stderr.write(
+        `[knbase] auto-bootstrap incomplete: ${(err as Error).message}\n`,
+      );
+      ensureDir(p.systemDir);
+      saveConfig(root, config);
+    }
+  }
   ensureDir(p.systemDir);
-  // Persist config so MCP-only usage (without `knbase init`) is fully
-  // functional for status/guard checks.
-  if (!isInitialized(root)) saveConfig(root, config);
   const index = refreshIndex(p, config);
   saveIndex(p, index);
 

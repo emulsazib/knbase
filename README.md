@@ -38,14 +38,13 @@ System artifacts live in `.knbase/` (`config.json`, `index.json`,
 The package is published as [`@vonneollc/knbase`](https://www.npmjs.com/package/@vonneollc/knbase),
 so you can use it without cloning this repo.
 
-**1. Initialize governance in your project:**
+**Zero-command flow:** the only thing you do is register the MCP server (below).
+Once it is connected, the agent receives the governance workflow automatically
+(via the server's MCP `instructions`) and knbase **self-initializes on first use** —
+it creates `.knbase/`, scaffolds the governance docs, and writes `AGENTS.md` the
+first time the agent calls `start_session`. You do **not** need to run `knbase init`.
 
-```bash
-cd /path/to/your/project
-npx -y --package @vonneollc/knbase knbase init
-```
-
-**2. Register the MCP server** with your agent. Cursor example
+**Register the MCP server** with your agent. Cursor example
 (`~/.cursor/mcp.json` for all projects, or `.cursor/mcp.json` for one project):
 
 ```json
@@ -89,6 +88,11 @@ which knbase-mcp     # e.g. /opt/homebrew/bin/knbase-mcp
 `KNBASE_ROOT` is optional; if omitted the server resolves the project root by
 walking up from the working directory (looking for `.knbase/` or `.git`). Each
 tool also accepts an explicit `root` argument.
+
+**Optional — `knbase init`:** you can pre-scaffold governance in a project without
+MCP (e.g. for non-MCP agents or shell workflows) by running
+`npx -y --package @vonneollc/knbase knbase init` in the project. This is the same
+setup the MCP server performs automatically, so it is not required.
 
 ## Complete setup (from source)
 
