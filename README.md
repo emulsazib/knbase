@@ -33,6 +33,18 @@ Stored in `memory-bank/` (configurable) in each project root:
 System artifacts live in `.knbase/` (`config.json`, `index.json`,
 `mindmap.md`, `activity.log`, `session.json`) and should not be edited by hand.
 
+## Set up project files
+
+Run this in your project to scaffold the governance docs, index, mind map, and
+`AGENTS.md` — no clone or install required:
+
+```bash
+npx -y --package @vonneollc/knbase knbase init
+```
+
+This is the same setup the MCP server performs automatically on first use, so it
+is optional if you register the MCP server (see below).
+
 ## Quick setup (recommended, no clone)
 
 The package is published as [`@vonneollc/knbase`](https://www.npmjs.com/package/@vonneollc/knbase),
